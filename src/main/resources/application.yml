@@ -1,0 +1,12 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+  application:
+    name: chart-room
+server:
+  servlet:
+    context-path: /cr
+logging:
+  level:
+    cn.hotpot: debug
