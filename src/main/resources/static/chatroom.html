@@ -123,61 +123,8 @@
 <script type="text/javascript" src="/cr/js/common/zh.js"></script>
 <script type="text/javascript" src="/cr/js/chatroom.js"></script>
 <script type="text/javascript">
-    var userId;
-    var socket;   
-    var sentMessageMap;
-    
-    setUserInfo(userId);
     setSentMessageMap();
-
-    if(!window.WebSocket){  
-        window.WebSocket = window.MozWebSocket;  
-    }  
-    if(window.WebSocket){
-        socket = new WebSocket("ws://localhost:8080/cr/chart/" + userId);
-        socket.onmessage = function(event){
-            var json = JSON.parse(event.data);
-            if (json !== null && json !== undefined) {
-                var type = json.data.type;
-                console.log("收到一条新信息，类型为：" + type);
-                switch(type) {
-                    case "REGISTER":
-                        ws.registerReceive();
-                        break;
-                    case "SINGLE_SENDING":
-                        ws.singleReceive(json.data);
-                        break;
-                    case "GROUP_SENDING":
-                        ws.groupReceive(json.data);
-                        break;
-                    case "FILE_MSG_SINGLE_SENDING":
-                        ws.fileMsgSingleRecieve(json.data);
-                        break;
-                    case "FILE_MSG_GROUP_SENDING":
-                        ws.fileMsgGroupRecieve(json.data);
-                        break;
-                    default:
-                        console.log("不正确的类型！");
-                }
-            } else {
-                alert(json.msg);
-                console.log(json.msg);
-            }
-        };
-
-        // 连接成功1秒后，将用户信息注册到服务器在线用户表
-        socket.onopen = setTimeout(function(event){
-              console.log("WebSocket已成功连接！");
-              ws.register();
-        }, 1000)
-
-        socket.onclose = function(event){
-              console.log("WebSocket已关闭...");
-        };
-    } else {
-          alert("您的浏览器不支持WebSocket！");
-    }
-    
+    init();
 </script>
 
 
