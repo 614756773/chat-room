@@ -15,6 +15,7 @@ public class UserVO {
     private String userId;
     private String username;
     private String avatarUrl;
+    private String invitationCode;
     private List<UserVO> friendList;
     private List<GroupVo> groupList;
 

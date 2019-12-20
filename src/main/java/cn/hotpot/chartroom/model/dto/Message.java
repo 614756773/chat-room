@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 public class Message {
 
     /**
-     * 消息类型 {@link cn.hotpot.chartroom.enums.WebsocketMeassageType}
+     * 消息类型 {@link cn.hotpot.chartroom.common.enums.WebsocketMeassageType}
      */
     private String type;
 

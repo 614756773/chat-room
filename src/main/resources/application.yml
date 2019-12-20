@@ -4,6 +4,14 @@ spring:
       enabled: always
   application:
     name: chart-room
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/chart_room?charset=utf8mb4&useSSL=false&serverTimezone=UTC
+    username: root
+    password: panzer..
+  jpa:
+    hibernate:
+      ddl-auto: update
 server:
   servlet:
     context-path: /cr

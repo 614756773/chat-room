@@ -1,6 +1,6 @@
 package cn.hotpot.chartroom.websocket;
 
-import cn.hotpot.chartroom.enums.WebsocketMeassageType;
+import cn.hotpot.chartroom.common.enums.WebsocketMeassageType;
 import cn.hotpot.chartroom.model.dto.Message;
 import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
@@ -24,8 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint("/chart/{userId}")
 @Slf4j
 @Component
-public class WebSocket {
+public class WebSocketService {
 
+    /**
+     * key -> sessionId, value -> userId + Session
+     */
     private static Map<String, SessionUser> map = new ConcurrentHashMap<>();
 
     @OnOpen
@@ -37,7 +40,7 @@ public class WebSocket {
     @OnMessage
     public void receiveClientMessage(Session session, String message) {
         log.debug("用户{}说：{}", map.get(session.getId()).userId, message);
-        sendToAllClient(message);
+        sendToAllClient(message, session.getId());
     }
 
     @OnClose
@@ -47,13 +50,15 @@ public class WebSocket {
         map.remove(id);
     }
 
-    private void sendToAllClient(String data) {
+    private void sendToAllClient(String data, String sessionId) {
         Message msg = new Message()
                 .setType(WebsocketMeassageType.GROUP_SENDING.getCode())
                 .setData(data);
         map.forEach((k, v) -> {
             try {
-                v.session.getBasicRemote().sendText(JSONObject.toJSONString(msg));
+                if (!k.equals(sessionId)) {
+                    v.session.getBasicRemote().sendText(JSONObject.toJSONString(msg));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

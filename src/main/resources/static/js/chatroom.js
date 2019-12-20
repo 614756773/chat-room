@@ -134,7 +134,7 @@ function init() {
             }
         },
 
-        groupSend: function(fromUserId, toGroupId, content) {
+        groupSend: function(fromUserId, toGroupId, content, avatarUrl) {
             if (!window.WebSocket) {
                   return;
             }
@@ -143,6 +143,7 @@ function init() {
                     "fromUserId" : fromUserId,
                     "toGroupId" : toGroupId,
                     "content" : content,
+                    "avatarUrl" : avatarUrl,
                     "type" : "GROUP_SENDING"
                 };
                 socket.send(JSON.stringify(data));
@@ -219,21 +220,24 @@ function init() {
             processFriendList.receiving(content, $receiveLi);
         },
 
-        groupReceive: function(data) {
+        groupReceive: function(dataString) {
             // 获取、构造参数
-            console.log(data);
-            var fromUserId = data.fromUserId;
-            var content = data.content;
-            var toGroupId = data.toGroupId;
-            var fromAvatarUrl;
-            var $receiveLi;
-            $('.conLeft').find('span.hidden-userId').each(function(){
-                if (this.innerHTML == fromUserId) {
-                    fromAvatarUrl = $(this).parent(".liRight")
-                        .siblings(".liLeft").children('img').attr("src");
-                    /* $receiveLi = $(this).parent(".liRight").parent("li"); */
-                }
-            })
+            console.log(dataString);
+            let data = JSON.parse(dataString);
+            const fromUserId = data.fromUserId;
+            const content = data.content;
+            const toGroupId = data.toGroupId;
+            let fromAvatarUrl = data.avatarUrl;
+            let $receiveLi;
+            // $('.conLeft').find('span.hidden-userId').each(function(){
+            //     if (this.innerHTML == fromUserId) {
+            //         console.log($(this).parent(".liRight")
+            //             .siblings(".liLeft"));
+            //         fromAvatarUrl = $(this).parent(".liRight")
+            //             .siblings(".liLeft").children('img').attr("src");
+            //         /* $receiveLi = $(this).parent(".liRight").parent("li"); */
+            //     }
+            // })
             $('.conLeft').find('span.hidden-groupId').each(function(){
                 if (this.innerHTML == toGroupId) {
                     $receiveLi = $(this).parent(".liRight").parent("li");
@@ -244,7 +248,6 @@ function init() {
                         '<div class="answers">'+ content +'</div>' +
                         '<div class="answerHead"><img src="' + fromAvatarUrl + '"/></div>' +
                     '</li>';
-
             // 消息框处理
             processMsgBox.receiveGroupMsg(answer, toGroupId);
             // 好友列表处理
@@ -453,7 +456,8 @@ function init() {
 		var fromUserId = userId;
 		var toUserId = $('#toUserId').val();
 		var toGroupId = $('#toGroupId').val();
-		var news = $('#dope').val();
+        var avatarUrl = $('#avatarUrl').attr("src");
+        var news = $('#dope').val();
 		if (toUserId == '' && toGroupId == '') {
 			alert("请选择对话方");
 			return;
@@ -463,9 +467,9 @@ function init() {
 			return;
 		} else {
 			if (toUserId.length != 0) {
-			    ws.singleSend(fromUserId, toUserId, news);
+			    ws.singleSend(fromUserId, toUserId, news, avatarUrl);
 			} else {
-				ws.groupSend(fromUserId, toGroupId, news);
+				ws.groupSend(fromUserId, toGroupId, news, avatarUrl);
 			}
 
 			$('#dope').val('');
@@ -591,6 +595,8 @@ function init() {
 				}
 
 				// 3. 把 调整后的消息html标签字符串 添加到已发送用户消息表
+                console.log(sentMessageMap);
+                console.log(sentMessageMap.get(toUserId));
 				if (toUserId.length != 0) {
 					sentMessageMap.get(toUserId).push($('.newsList li').last().prop("outerHTML"));
 				} else {

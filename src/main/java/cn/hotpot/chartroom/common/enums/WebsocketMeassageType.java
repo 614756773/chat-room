@@ -1,4 +1,4 @@
-package cn.hotpot.chartroom.enums;
+package cn.hotpot.chartroom.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

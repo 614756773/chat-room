@@ -1,53 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="no-js">
 <head>
-    <title>Hello WebSocket</title>
-    <link href="webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="main.css" rel="stylesheet">
-    <script src="webjars/jquery/jquery.min.js"></script>
-    <script src="webjars/sockjs-client/sockjs.min.js"></script>
-    <script src="webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="app.js"></script>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>登录</title>
+    <link rel="icon" href="/cr/img/chat.ico" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" href="/cr/css/login/normalize.css"/>
+    <link rel="stylesheet" type="text/css" href="/cr/css/login/demo.css"/>
+    <!--必要样式-->
+    <link rel="stylesheet" type="text/css" href="/cr/css/login/component.css"/>
+    <!--[if IE]>
+    <script src="/cr/css/login/html5.js"></script>
+    <![endif]-->
 </head>
 <body>
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
-    enabled. Please enable
-    Javascript and reload this page!</h2></noscript>
-<div id="main-content" class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="connect">WebSocket connection:</label>
-                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
-                    </button>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="name">What is your name?</label>
-                    <input type="text" id="name" class="form-control" placeholder="Your name here...">
-                </div>
-                <button id="send" class="btn btn-default" type="submit">Send</button>
-            </form>
+<div class="container demo-1">
+    <div class="content">
+        <div id="large-header" class="large-header">
+            <canvas id="demo-canvas"></canvas>
+            <div class="logo_box">
+                <h3>欢迎你</h3>
+                <form action="#" name="f" method="post">
+                    <div class="input_outer">
+                        <span class="u_user"></span>
+                        <input name="logname" class="text" style="color: #FFFFFF !important" type="text"
+                               placeholder="请输入账户">
+                    </div>
+                    <div class="input_outer">
+                        <span class="us_uer"></span>
+                        <input name="logpass" class="text"
+                               style="color: #FFFFFF !important; position:absolute; z-index:100;" value=""
+                               type="password" placeholder="请输入密码">
+                    </div>
+                    <div class="mb2"><a class="act-but submit" href="javascript:;" style="color: #FFFFFF">登录</a></div>
+                </form>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <table id="conversation" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Greetings</th>
-                </tr>
-                </thead>
-                <tbody id="greetings">
-                </tbody>
-            </table>
-        </div>
-    </div>
+</div><!-- /container -->
+<script src="/cr/js/login/TweenLite.min.js"></script>
+<script src="/cr/js/login/EasePack.min.js"></script>
+<script src="/cr/js/login/rAF.js"></script>
+<script src="/cr/js/login/demo-1.js"></script>
+<div style="text-align:center;">
 </div>
 </body>
 </html>
