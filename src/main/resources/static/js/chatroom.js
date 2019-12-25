@@ -2,7 +2,7 @@ function init() {
 
         $.ajax({
             type : 'GET',
-            url : 'getUserInfo',
+            url : '/cr/user/getUserInfo',
             dataType: 'json',
             async : true,
                 success: function(data) {
@@ -53,7 +53,6 @@ function init() {
                 '</div>' +
                 '</li>';
         }
-        console.log(friendListHTML);
         // 设置好友列表
         $('.conLeft ul').append(friendListHTML);
         // 绑定好友框点击事件
@@ -65,7 +64,7 @@ function init() {
             window.WebSocket = window.MozWebSocket;
         }
         if(window.WebSocket){
-            socket = new WebSocket("ws://localhost:8080/cr/chart/" + window.userId);
+            socket = new WebSocket("ws://localhost:8888/cr/chart/" + window.userId);
             socket.onmessage = function(event){
                 var json = JSON.parse(event.data);
                 if (json !== null && json !== undefined) {
@@ -104,16 +103,16 @@ function init() {
 
     function setSentMessageMap() {
         sentMessageMap = new SentMessageMap();
-        sentMessageMap.put("001", new Array());
-        sentMessageMap.put("002", new Array());
-        sentMessageMap.put("003", new Array());
-        sentMessageMap.put("004", new Array());
-        sentMessageMap.put("005", new Array());
-        sentMessageMap.put("006", new Array());
-        sentMessageMap.put("007", new Array());
-        sentMessageMap.put("008", new Array());
-        sentMessageMap.put("009", new Array());
-        sentMessageMap.put("01", new Array());
+        sentMessageMap.put("001", []);
+        sentMessageMap.put("002", []);
+        sentMessageMap.put("003", []);
+        sentMessageMap.put("004", []);
+        sentMessageMap.put("005", []);
+        sentMessageMap.put("006", []);
+        sentMessageMap.put("007", []);
+        sentMessageMap.put("008", []);
+        sentMessageMap.put("009", []);
+        sentMessageMap.put("01", []);
     }
 
     var ws = {
@@ -453,9 +452,9 @@ function init() {
 
 	// 绑定发送按钮点击事件
 	$('.sendBtn').on('click',function(){
-		var fromUserId = userId;
-		var toUserId = $('#toUserId').val();
-		var toGroupId = $('#toGroupId').val();
+        var fromUserId = userId;
+        var toUserId = $('#toUserId').val();
+        var toGroupId = $('#toGroupId').val();
         var avatarUrl = $('#avatarUrl').attr("src");
         var news = $('#dope').val();
 		if (toUserId == '' && toGroupId == '') {
@@ -473,7 +472,7 @@ function init() {
 			}
 
 			$('#dope').val('');
-			var avatarUrl = $('#avatarUrl').attr("src");
+            var avatarUrl = $('#avatarUrl').attr("src");
 			var msg = '';
 			msg += '<li>'+
 					'<div class="news">' + news + '</div>' +
@@ -489,6 +488,39 @@ function init() {
 		}
 	})
 
+    // 发送图片
+    function sendImg(obj) {
+        let imgSrc;
+        if (typeof (obj) === 'number') {
+            imgSrc = '/cr/file/' + obj  + '/preview';
+        } else {
+            imgSrc = $(obj).children('img').attr('src');
+        }
+        $('.emjon').hide();
+        var fromUserId = userId;
+        var toUserId = $('#toUserId').val();
+        var toGroupId = $('#toGroupId').val();
+        var avatarUrl = $('#avatarUrl').attr("src");
+        var content  = '<img class="Expr" src="' + imgSrc + '">';
+        if (toUserId == '' && toGroupId == '') {
+            alert("请选择对话方");
+            return;
+        }
+        if (toUserId.length != 0) {
+            ws.singleSend(fromUserId, toUserId, content, avatarUrl);
+        } else {
+            ws.groupSend(fromUserId, toGroupId, content, avatarUrl);
+        }
+        var msg = '';
+        msg += '<li>'+
+            '<div class="news">' + content + '</div>' +
+            '<div class="nesHead"><img src="' + avatarUrl + '"/></div>' +
+            '</li>';
+        processMsgBox.sendMsg(msg, toUserId, toGroupId);
+        var $sendLi = $('.conLeft').find('li.bg');
+        content = "[图片]";
+        processFriendList.sending(content, $sendLi);
+    }
 	$('.ExP').on('mouseenter',function(){
 		$('.emjon').show();
 	})
@@ -498,32 +530,8 @@ function init() {
 	})
 
 	$('.emjon li').on('click',function(){
-		var imgSrc=$(this).children('img').attr('src');
-		$('.emjon').hide();
-		var fromUserId = userId;
-		var toUserId = $('#toUserId').val();
-		var toGroupId = $('#toGroupId').val();
-		var content  = '<img class="Expr" src="' + imgSrc + '">';
-		if (toUserId == '' && toGroupId == '') {
-			alert("请选择对话方");
-			return;
-		}
-		if (toUserId.length != 0) {
-		    ws.singleSend(fromUserId, toUserId, content);
-		} else {
-			ws.groupSend(fromUserId, toGroupId, content);
-		}
-		var avatarUrl = $('#avatarUrl').attr("src");
-		var msg = '';
-		msg += '<li>'+
-				'<div class="news">' + content + '</div>' +
-				'<div class="nesHead"><img src="' + avatarUrl + '"/></div>' +
-			'</li>';
-		processMsgBox.sendMsg(msg, toUserId, toGroupId);
-		var $sendLi = $('.conLeft').find('li.bg');
-		content = "[图片]";
-		processFriendList.sending(content, $sendLi);
-	})
+        sendImg(this);
+	});
 
 	// 好友框点击事件
 	function friendLiClickEvent(){
@@ -595,8 +603,6 @@ function init() {
 				}
 
 				// 3. 把 调整后的消息html标签字符串 添加到已发送用户消息表
-                console.log(sentMessageMap);
-                console.log(sentMessageMap.get(toUserId));
 				if (toUserId.length != 0) {
 					sentMessageMap.get(toUserId).push($('.newsList li').last().prop("outerHTML"));
 				} else {

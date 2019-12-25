@@ -5,24 +5,21 @@ import lombok.experimental.Accessors;
 
 /**
  * @author qinzhu
- * @since 2019/12/19
+ * @since 2019/12/25
  */
 @Data
 @Accessors(chain = true)
 public class Message {
+    private String fromUserId;
+
+    private String avatarUrl;
+
+    private String toGroupId;
+
+    private String content;
 
     /**
-     * 消息类型 {@link cn.hotpot.chartroom.common.enums.WebsocketMeassageType}
+     * {@link cn.hotpot.chartroom.common.enums.WebsocketMeassageType}
      */
     private String type;
-
-    /**
-     * 文字内容
-     */
-    private String data;
-
-    /**
-     * 表情包
-     */
-    private byte[] bqb;
 }

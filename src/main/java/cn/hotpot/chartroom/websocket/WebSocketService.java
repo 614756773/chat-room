@@ -1,7 +1,7 @@
 package cn.hotpot.chartroom.websocket;
 
 import cn.hotpot.chartroom.common.enums.WebsocketMeassageType;
-import cn.hotpot.chartroom.model.dto.Message;
+import cn.hotpot.chartroom.model.dto.MessageFrame;
 import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,11 +51,12 @@ public class WebSocketService {
     }
 
     private void sendToAllClient(String data, String sessionId) {
-        Message msg = new Message()
+        MessageFrame msg = new MessageFrame()
                 .setType(WebsocketMeassageType.GROUP_SENDING.getCode())
                 .setData(data);
         map.forEach((k, v) -> {
             try {
+                // 加上判断，不然还会发给自己- -。
                 if (!k.equals(sessionId)) {
                     v.session.getBasicRemote().sendText(JSONObject.toJSONString(msg));
                 }

@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2019/12/17
  */
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
@@ -46,9 +47,9 @@ public class UserController {
     @GetMapping("/getUserInfo")
     public UserVO getUserInfo() {
         UserVO.GroupVo groupVo = new UserVO.GroupVo()
-                .setGroupAvatarUrl("https://img.hacpai.com/avatar/1551616223515_1574851307648.png")
+                .setGroupAvatarUrl("http://localhost:8888/cr/img/avatar/Group01.jpg")
                 .setGroupId("01")
-                .setGroupName("公共聊天室");
+                .setGroupName("摸鱼聊天室");
         return new UserVO()
                 .setAvatarUrl("https://img.hacpai.com/avatar/1551616223515_1574851307648.png")
                 .setGroupList(Collections.singletonList(groupVo))

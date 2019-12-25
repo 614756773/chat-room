@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(indexes = {@Index(name = "userId", columnList = "userId", unique = true)})
 @Accessors(chain = true)
+@EntityListeners(AuditingEntityListener.class)
 public class ChartUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

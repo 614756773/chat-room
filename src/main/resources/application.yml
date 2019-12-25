@@ -15,6 +15,7 @@ spring:
 server:
   servlet:
     context-path: /cr
+  port: 8888
 logging:
   level:
     cn.hotpot: debug

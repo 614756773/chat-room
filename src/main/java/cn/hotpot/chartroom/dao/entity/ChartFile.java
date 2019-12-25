@@ -11,32 +11,43 @@ import java.time.LocalDateTime;
 
 /**
  * @author qinzhu
- * @since 2019/12/20
+ * @since 2019/12/25
  */
 @Entity
-@Table(indexes = {@Index(name = "userId", columnList = "userId", unique = true)})
 @Data
 @Accessors(chain = true)
 @EntityListeners(AuditingEntityListener.class)
-public class ChartInvitationCode {
+public class ChartFile {
     /**
-     * 即是id，也是邀请码
+     * id
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     /**
-     * 该邀请码的持有者
-     */
-    @Column(length = 30)
-    private String userId;
-
-    /**
-     * 谁使用了该邀请码
+     * 文件名称
      */
     @Column
-    private String whoUse;
+    private String name;
+
+    /**
+     * 数据
+     */
+    @Column(columnDefinition = "blob")
+    private byte[] data;
+
+    /**
+     * 文件大小
+     */
+    @Column
+    private Long size;
+
+    /**
+     * 文件类型，其实就是文件后缀
+     */
+    @Column(length = 10)
+    private String type;
 
     @Column
     @CreatedDate
@@ -45,11 +56,4 @@ public class ChartInvitationCode {
     @Column
     @LastModifiedDate
     private LocalDateTime modifyTime;
-
-    public ChartInvitationCode() {
-    }
-
-    public ChartInvitationCode(int mockInvitationCode) {
-        this.id = mockInvitationCode;
-    }
 }
