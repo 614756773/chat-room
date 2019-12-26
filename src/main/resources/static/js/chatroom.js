@@ -430,11 +430,17 @@ function init() {
 
     // 防止js注入
     function htmlEncode ( str ) {
+        if(str.startsWith('<img')) {
+            return str;
+        }
         return $('<span/>').text( str ).html();
     }
 
     // 防止js注入
     function htmlDecode ( str ) {
+        if(str.startsWith('<img')) {
+            return str;
+        }
         return $('<span/>').html(str).text();
     }
 
