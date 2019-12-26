@@ -26,6 +26,6 @@ public class AvatarUrls {
 
     public static String getAny() {
         int i = new Random().nextInt(list.size());
-        return "localhost:8888/cr/" + list.get(i);
+        return "/cr/" + list.get(i);
     }
 }

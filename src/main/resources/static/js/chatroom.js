@@ -228,15 +228,6 @@ function init() {
             const toGroupId = data.toGroupId;
             let fromAvatarUrl = data.avatarUrl;
             let $receiveLi;
-            // $('.conLeft').find('span.hidden-userId').each(function(){
-            //     if (this.innerHTML == fromUserId) {
-            //         console.log($(this).parent(".liRight")
-            //             .siblings(".liLeft"));
-            //         fromAvatarUrl = $(this).parent(".liRight")
-            //             .siblings(".liLeft").children('img').attr("src");
-            //         /* $receiveLi = $(this).parent(".liRight").parent("li"); */
-            //     }
-            // })
             $('.conLeft').find('span.hidden-groupId').each(function(){
                 if (this.innerHTML == toGroupId) {
                     $receiveLi = $(this).parent(".liRight").parent("li");
@@ -245,7 +236,7 @@ function init() {
             var answer='';
             answer += '<li>' +
                         '<div class="answers">'+ content +'</div>' +
-                        '<div class="answerHead"><img src="' + fromAvatarUrl + '"/></div>' +
+                        '<div class="answerHead"><img src="' + fromAvatarUrl + '" onmouseover="showOriginalImg(this)"/></div>' +
                     '</li>';
             // 消息框处理
             processMsgBox.receiveGroupMsg(answer, toGroupId);
@@ -476,7 +467,7 @@ function init() {
 			var msg = '';
 			msg += '<li>'+
 					'<div class="news">' + news + '</div>' +
-					'<div class="nesHead"><img src="' + avatarUrl + '"/></div>' +
+					'<div class="nesHead"><img onmouseover="showOriginalImg(this)" src="' + avatarUrl + '"/></div>' +
 				'</li>';
 
 			// 消息框处理：
@@ -486,7 +477,13 @@ function init() {
 			var $sendLi = $('.conLeft').find('li.bg');
 			processFriendList.sending(news, $sendLi);
 		}
-	})
+	});
+
+	// 展示原图
+	function showOriginalImg(obj) {
+        $("#original-img").attr('src',obj.src);
+        $('#imgModal').modal('show');
+    }
 
     // 发送图片
     function sendImg(obj) {
@@ -501,7 +498,7 @@ function init() {
         var toUserId = $('#toUserId').val();
         var toGroupId = $('#toGroupId').val();
         var avatarUrl = $('#avatarUrl').attr("src");
-        var content  = '<img class="Expr" src="' + imgSrc + '">';
+        var content  = '<img class="Expr" onmouseover="showOriginalImg(this)" src="' + imgSrc + '">';
         if (toUserId == '' && toGroupId == '') {
             alert("请选择对话方");
             return;
@@ -514,7 +511,7 @@ function init() {
         var msg = '';
         msg += '<li>'+
             '<div class="news">' + content + '</div>' +
-            '<div class="nesHead"><img src="' + avatarUrl + '"/></div>' +
+            '<div class="nesHead"><img onmouseover="showOriginalImg(this)" src="' + avatarUrl + '"/></div>' +
             '</li>';
         processMsgBox.sendMsg(msg, toUserId, toGroupId);
         var $sendLi = $('.conLeft').find('li.bg');

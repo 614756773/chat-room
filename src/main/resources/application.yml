@@ -19,3 +19,4 @@ server:
 logging:
   level:
     cn.hotpot: debug
+  file: chart-room.log

@@ -146,6 +146,7 @@ body {
     border-radius: 50%;
     margin-left:10px ;
     float: left;
+    cursor: pointer;
 }
 .nesHead img{
     width: 40px;

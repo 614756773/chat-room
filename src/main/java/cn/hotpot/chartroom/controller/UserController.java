@@ -47,7 +47,7 @@ public class UserController {
     @GetMapping("/getUserInfo")
     public UserVO getUserInfo() {
         UserVO.GroupVo groupVo = new UserVO.GroupVo()
-                .setGroupAvatarUrl("http://localhost:8888/cr/img/avatar/Group01.jpg")
+                .setGroupAvatarUrl("/cr/img/avatar/Group01.jpg")
                 .setGroupId("01")
                 .setGroupName("摸鱼聊天室");
         return new UserVO()

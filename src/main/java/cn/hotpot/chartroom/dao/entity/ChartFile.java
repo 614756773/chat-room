@@ -34,7 +34,7 @@ public class ChartFile {
     /**
      * 数据
      */
-    @Column(columnDefinition = "blob")
+    @Column(columnDefinition = "mediumblob")
     private byte[] data;
 
     /**
