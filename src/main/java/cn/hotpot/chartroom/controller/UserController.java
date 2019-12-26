@@ -51,7 +51,6 @@ public class UserController {
                 .setGroupId("01")
                 .setGroupName("摸鱼聊天室");
         return new UserVO()
-//                .setAvatarUrl("https://img.hacpai.com/avatar/1551616223515_1574851307648.png")
                 .setAvatarUrl(AvatarUrls.getAny())
                 .setGroupList(Collections.singletonList(groupVo))
                 .setUserId("614756773")
