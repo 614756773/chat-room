@@ -99,7 +99,6 @@ function init() {
         }
     }
 
-
     function setSentMessageMap() {
         sentMessageMap = new SentMessageMap();
         sentMessageMap.put("001", []);
@@ -222,7 +221,7 @@ function init() {
             // 获取、构造参数
             let data = JSON.parse(dataString);
             const fromUserId = data.fromUserId;
-            const content = data.content;
+            const content = htmlDecode(data.content);
             const toGroupId = data.toGroupId;
             let fromAvatarUrl = data.avatarUrl;
             let $receiveLi;
@@ -429,6 +428,16 @@ function init() {
         console.log("filepreupload");
     });
 
+    // 防止js注入
+    function htmlEncode ( str ) {
+        return $('<span/>').text( str ).html();
+    }
+
+    // 防止js注入
+    function htmlDecode ( str ) {
+        return $('<span/>').html(str).text();
+    }
+
 	// 绑定发送按钮回车事件
 	$('#dope').keydown(function(e) {
 		if (e.keyCode == 13) {
@@ -444,6 +453,7 @@ function init() {
         var toGroupId = $('#toGroupId').val();
         var avatarUrl = $('#avatarUrl').attr("src");
         var news = $('#dope').val();
+        news = htmlEncode(news);
 		if (toUserId == '' && toGroupId == '') {
 			alert("请选择对话方");
 			return;
