@@ -174,8 +174,8 @@
                 alert(xhr.responseText);
                 return;
             }
-            const json = JSON.parse(xhr.responseText);
-            sendImg(json);
+            const result = JSON.parse(xhr.responseText);
+            sendImg(result.id);
         };
         xhr.open('POST', '/cr/file/upload', true);
         xhr.send(formData);

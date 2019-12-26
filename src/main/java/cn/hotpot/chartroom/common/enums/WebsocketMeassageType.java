@@ -19,4 +19,13 @@ public enum WebsocketMeassageType {
     private String code;
     private String value;
 
+    public static boolean contains(String type) {
+        for (WebsocketMeassageType meassageType : WebsocketMeassageType.values()) {
+            if (meassageType.code.equals(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

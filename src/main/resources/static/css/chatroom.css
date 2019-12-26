@@ -27,6 +27,7 @@ body {
     height: 44px;
     border-radius: 60%;
     margin:0 10px;
+    cursor: pointer;
 }
 .headImg img{
     width: 100%;

@@ -69,18 +69,19 @@ function init() {
                 var json = JSON.parse(event.data);
                 if (json !== null && json !== undefined) {
                     var type = json.type;
+                    const data = JSON.parse(json.data);
                     switch(type) {
                         case "SINGLE_SENDING":
-                            ws.singleReceive(json.data);
+                            ws.singleReceive(data);
                             break;
                         case "GROUP_SENDING":
-                            ws.groupReceive(json.data);
+                            ws.groupReceive(data);
                             break;
                         case "FILE_MSG_SINGLE_SENDING":
-                            ws.fileMsgSingleRecieve(json.data);
+                            ws.fileMsgSingleRecieve(data);
                             break;
                         case "FILE_MSG_GROUP_SENDING":
-                            ws.fileMsgGroupRecieve(json.data);
+                            ws.fileMsgGroupRecieve(data);
                             break;
                         default:
                             console.log("不正确的类型！");
@@ -149,13 +150,14 @@ function init() {
             }
         },
 
-        fileMsgSingleSend: function(fromUserId, toUserId, originalFilename, fileUrl, fileSize) {
+        fileMsgSingleSend: function(fromUserId, avatarUrl, toUserId, originalFilename, fileUrl, fileSize) {
             if (!window.WebSocket) {
                   return;
             }
             if (socket.readyState == WebSocket.OPEN) {
                 var data = {
                     "fromUserId" : fromUserId,
+                    "avatarUrl" : avatarUrl,
                     "toUserId" : toUserId,
                     "originalFilename" : originalFilename,
                     "fileUrl" : fileUrl,
@@ -168,13 +170,14 @@ function init() {
             }
         },
 
-        fileMsgGroupSend: function(fromUserId, toGroupId, originalFilename, fileUrl, fileSize) {
+        fileMsgGroupSend: function(fromUserId, avatarUrl, toGroupId, originalFilename, fileUrl, fileSize) {
             if (!window.WebSocket) {
                   return;
             }
             if (socket.readyState == WebSocket.OPEN) {
                 var data = {
                     "fromUserId" : fromUserId,
+                    "avatarUrl": avatarUrl,
                     "toGroupId" : toGroupId,
                     "originalFilename" : originalFilename,
                     "fileUrl" : fileUrl,
@@ -217,9 +220,8 @@ function init() {
             processFriendList.receiving(content, $receiveLi);
         },
 
-        groupReceive: function(dataString) {
+        groupReceive: function(data) {
             // 获取、构造参数
-            let data = JSON.parse(dataString);
             const fromUserId = data.fromUserId;
             const content = htmlDecode(data.content);
             const toGroupId = data.toGroupId;
@@ -233,7 +235,7 @@ function init() {
             var answer='';
             answer += '<li>' +
                         '<div class="answers">'+ content +'</div>' +
-                        '<div class="answerHead"><img src="' + fromAvatarUrl + '" onmouseover="showOriginalImg(this)"/></div>' +
+                        '<div class="answerHead"><img src="' + fromAvatarUrl + '" onclick="showOriginalImg(this)"/></div>' +
                     '</li>';
             // 消息框处理
             processMsgBox.receiveGroupMsg(answer, toGroupId);
@@ -287,15 +289,8 @@ function init() {
             var fileSize = data.fileSize;
             var fileUrl = data.fileUrl;
             var content = "[文件]";
-            var fromAvatarUrl;
+            var fromAvatarUrl = data.avatarUrl;
             var $receiveLi;
-            $('.conLeft').find('span.hidden-userId').each(function(){
-                if (this.innerHTML == fromUserId) {
-                    fromAvatarUrl = $(this).parent(".liRight")
-                        .siblings(".liLeft").children('img').attr("src");
-                    /* $receiveLi = $(this).parent(".liRight").parent("li"); */
-                }
-            })
             $('.conLeft').find('span.hidden-groupId').each(function(){
                 if (this.innerHTML == toGroupId) {
                     $receiveLi = $(this).parent(".liRight").parent("li");
@@ -351,7 +346,7 @@ function init() {
     }
 
     $(".myfile").fileinput({
-        uploadUrl:"chatroom/upload",
+        uploadUrl:"/cr/file/upload",
         uploadAsync : true, //默认异步上传
         showUpload : true, //是否显示上传按钮,跟随文本框的那个
         showRemove : false, //显示移除按钮,跟随文本框的那个
@@ -383,10 +378,12 @@ function init() {
         }, 1500);
 
         // 2. 获取、设置参数
-        var returnData = data.response.data;
-        var originalFilename = returnData.originalFilename;
-        var fileSize = returnData.fileSize;
-        var fileUrl = returnData.fileUrl;
+        const result = data.response;
+        var fileId = result.id;
+        var originalFilename = result.name;
+        var fileSize = (result.size / 1024);
+        fileSize = fileSize.toFixed(2) + ' MB';
+        var fileUrl = '/cr/file/' + fileId;
         var content = "[文件]";
         var fromUserId = userId;
         var avatarUrl = $('#avatarUrl').attr("src");
@@ -411,9 +408,9 @@ function init() {
 
         // 3. 发送信息到服务器
         if (toUserId.length != 0) {
-            ws.fileMsgSingleSend(fromUserId, toUserId, originalFilename, fileUrl, fileSize);
+            ws.fileMsgSingleSend(fromUserId, avatarUrl, toUserId, originalFilename, fileUrl, fileSize);
         } else {
-            ws.fileMsgGroupSend(fromUserId, toGroupId, originalFilename, fileUrl, fileSize);
+            ws.fileMsgGroupSend(fromUserId, avatarUrl, toGroupId, originalFilename, fileUrl, fileSize);
         }
 
         // 4. 消息框处理：
@@ -479,7 +476,7 @@ function init() {
 			var msg = '';
 			msg += '<li>'+
 					'<div class="news">' + news + '</div>' +
-					'<div class="nesHead"><img onmouseover="showOriginalImg(this)" src="' + avatarUrl + '"/></div>' +
+					'<div class="nesHead"><img onclick="showOriginalImg(this)" src="' + avatarUrl + '"/></div>' +
 				'</li>';
 
 			// 消息框处理：
@@ -510,7 +507,7 @@ function init() {
         var toUserId = $('#toUserId').val();
         var toGroupId = $('#toGroupId').val();
         var avatarUrl = $('#avatarUrl').attr("src");
-        var content  = '<img class="Expr" onmouseover="showOriginalImg(this)" src="' + imgSrc + '">';
+        var content  = '<img class="Expr" onclick="showOriginalImg(this)" src="' + imgSrc + '">';
         if (toUserId == '' && toGroupId == '') {
             alert("请选择对话方");
             return;
@@ -523,7 +520,7 @@ function init() {
         var msg = '';
         msg += '<li>'+
             '<div class="news">' + content + '</div>' +
-            '<div class="nesHead"><img onmouseover="showOriginalImg(this)" src="' + avatarUrl + '"/></div>' +
+            '<div class="nesHead"><img onclick="showOriginalImg(this)" src="' + avatarUrl + '"/></div>' +
             '</li>';
         processMsgBox.sendMsg(msg, toUserId, toGroupId);
         var $sendLi = $('.conLeft').find('li.bg');

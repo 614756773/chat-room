@@ -1,7 +1,9 @@
 package cn.hotpot.chartroom.websocket;
 
 import cn.hotpot.chartroom.common.enums.WebsocketMeassageType;
+import cn.hotpot.chartroom.model.dto.Message;
 import cn.hotpot.chartroom.model.dto.MessageFrame;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +53,12 @@ public class WebSocketService {
     }
 
     private void sendToAllClient(String data, String sessionId) {
+        Message message = JSON.parseObject(data, Message.class);
+        if (!WebsocketMeassageType.contains(message.getType())) {
+            throw new RuntimeException("非法的消息类型");
+        }
         MessageFrame msg = new MessageFrame()
-                .setType(WebsocketMeassageType.GROUP_SENDING.getCode())
+                .setType(message.getType())
                 .setData(data);
         map.forEach((k, v) -> {
             try {

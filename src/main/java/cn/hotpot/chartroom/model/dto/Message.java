@@ -18,6 +18,12 @@ public class Message {
 
     private String content;
 
+    private String originalFilename;
+
+    private String fileUrl;
+
+    private String fileSize;
+
     /**
      * {@link cn.hotpot.chartroom.common.enums.WebsocketMeassageType}
      */

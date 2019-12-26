@@ -2,6 +2,7 @@ package cn.hotpot.chartroom.controller;
 
 import cn.hotpot.chartroom.dao.entity.ChartFile;
 import cn.hotpot.chartroom.dao.repository.ChartFileRepository;
+import cn.hotpot.chartroom.model.vo.FileUploadResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +30,7 @@ public class FileController {
     private ChartFileRepository chartFileRepository;
 
     @PostMapping("/upload")
-    public ResponseEntity<Integer> upload(MultipartFile file) throws IOException {
+    public ResponseEntity<FileUploadResultVO> upload(MultipartFile file) throws IOException {
         String suffix = checkSize(file);
         ChartFile chartFile = new ChartFile()
                 .setName(file.getOriginalFilename())
@@ -36,7 +38,23 @@ public class FileController {
                 .setData(file.getBytes())
                 .setSize(file.getSize());
         ChartFile entity = chartFileRepository.save(chartFile);
-        return ResponseEntity.ok(entity.getId());
+        return ResponseEntity.ok(new FileUploadResultVO(entity.getId(), entity.getName(), entity.getSize()));
+    }
+
+    /**
+     * 下载文件
+     */
+    @GetMapping("/{id}")
+    public void download(HttpServletResponse response, @PathVariable Integer id) throws IOException {
+        try (ServletOutputStream os = response.getOutputStream()) {
+            ChartFile chartFile = chartFileRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("没有此图片"));
+            String fileName = URLEncoder.encode(chartFile.getName(), "UTF-8");
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+            os.write(chartFile.getData());
+            os.flush();
+        }
     }
 
     /**
