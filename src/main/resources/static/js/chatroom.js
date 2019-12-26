@@ -69,7 +69,6 @@ function init() {
                 var json = JSON.parse(event.data);
                 if (json !== null && json !== undefined) {
                     var type = json.type;
-                    console.log("收到一条新信息，类型为：" + type);
                     switch(type) {
                         case "SINGLE_SENDING":
                             ws.singleReceive(json.data);
@@ -221,7 +220,6 @@ function init() {
 
         groupReceive: function(dataString) {
             // 获取、构造参数
-            console.log(dataString);
             let data = JSON.parse(dataString);
             const fromUserId = data.fromUserId;
             const content = data.content;
@@ -246,7 +244,6 @@ function init() {
 
         fileMsgSingleRecieve: function(data) {
             // 获取、构造参数
-            console.log(data);
             var fromUserId = data.fromUserId;
             var originalFilename = data.originalFilename;
             var fileSize = data.fileSize;
@@ -285,7 +282,6 @@ function init() {
 
         fileMsgGroupRecieve: function(data) {
             // 1. 获取、构造参数
-            console.log(data);
             var fromUserId = data.fromUserId;
             var toGroupId = data.toGroupId;
             var originalFilename = data.originalFilename;
