@@ -49,7 +49,7 @@ public class UserController {
         UserVO.GroupVo groupVo = new UserVO.GroupVo()
                 .setGroupAvatarUrl("/cr/img/avatar/Group01.jpg")
                 .setGroupId("01")
-                .setGroupName("摸鱼聊天室");
+                .setGroupName("Chat Room");
         return new UserVO()
                 .setAvatarUrl(AvatarUrls.getAny())
                 .setGroupList(Collections.singletonList(groupVo))

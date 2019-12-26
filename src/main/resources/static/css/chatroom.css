@@ -187,6 +187,7 @@ body {
     border-radius: 50%;
     margin-left:15px ;
     float: left;
+    cursor: pointer;
 }
 .answerHead img{
     width: 40px;
