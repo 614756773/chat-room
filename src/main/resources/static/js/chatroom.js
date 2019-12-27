@@ -370,19 +370,19 @@ function init() {
     //异步上传返回结果处理
     $(".myfile").on("fileuploaded", function(event, data, previewId, index) {
 
-        // 1. 上传成功1.5秒后自动关闭上传模态框
+        // 1. 上传成功0.5秒后自动关闭上传模态框
         console.log("fileuploaded");
         setTimeout(function() {
             $('#upload-cancel').trigger('click');
             $('.fileinput-remove').trigger('click');
-        }, 1500);
+        }, 0.5);
 
         // 2. 获取、设置参数
         const result = data.response;
         var fileId = result.id;
         var originalFilename = result.name;
         var fileSize = (result.size / 1024);
-        fileSize = fileSize.toFixed(2) + ' MB';
+        fileSize = fileSize.toFixed(2) + ' KB';
         var fileUrl = '/cr/file/' + fileId;
         var content = "[文件]";
         var fromUserId = userId;
