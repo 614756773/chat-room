@@ -59,10 +59,34 @@ function init() {
         $('.conLeft ul li').on('click', friendLiClickEvent);
     }
 
+    // 浏览器通知
+    function notification() {
+        if(window.Notification && Notification.permission !== "denied") {
+            //Notification.requestPermission这是一个静态方法，作用就是让浏览器出现是否允许通知的提示
+            Notification.requestPermission(function(status) {
+                console.log('2: '+status);
+                //如果状态是同意
+                if (status === "granted") {
+                    const m = new Notification('新消息', {
+                        // body: '这里是通知内容！你想看什么客官？',　　//消息体内容
+                        icon:"/cr/img/chat.ico"　　//消息图片
+                    });
+                    m.onclick = function () {//点击当前消息提示框后，跳转到当前页面
+                        window.focus();
+                    }
+                } else if (window.notificationFlag === undefined || !window.notificationFlag){
+                    alert('当前浏览器不支持弹出消息，为了更好的体验请更换为Chrome/Firefox浏览器');
+                    window.notificationFlag = true;
+                }
+            });
+        }
+    }
+
     function buildWs() {
         if(!window.WebSocket){
             window.WebSocket = window.MozWebSocket;
         }
+
         if(window.WebSocket){
             socket = new WebSocket("ws://localhost:8888/cr/chat/" + window.userId);
             socket.onmessage = function(event){
@@ -70,6 +94,9 @@ function init() {
                 if (json !== null && json !== undefined) {
                     var type = json.type;
                     const data = JSON.parse(json.data);
+                    if (type.endsWith('SENDING')) {
+                        notification();
+                    }
                     switch(type) {
                         case "SINGLE_SENDING":
                             ws.singleReceive(data);
