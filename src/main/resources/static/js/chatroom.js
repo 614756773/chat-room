@@ -64,7 +64,7 @@ function init() {
             window.WebSocket = window.MozWebSocket;
         }
         if(window.WebSocket){
-            socket = new WebSocket("ws://localhost:8888/cr/chart/" + window.userId);
+            socket = new WebSocket("ws://localhost:8888/cr/chat/" + window.userId);
             socket.onmessage = function(event){
                 var json = JSON.parse(event.data);
                 if (json !== null && json !== undefined) {

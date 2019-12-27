@@ -3,10 +3,10 @@ spring:
     ansi:
       enabled: always
   application:
-    name: chart-room
+    name: chat-room
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/chart_room?charset=utf8mb4&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/chat_room?charset=utf8mb4&useSSL=false&serverTimezone=UTC
     username: root
     password: panzer..
   jpa:
@@ -19,4 +19,4 @@ server:
 logging:
   level:
     cn.hotpot: debug
-  file: chart-room.log
+  file: chat-room.log
