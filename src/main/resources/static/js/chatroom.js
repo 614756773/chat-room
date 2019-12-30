@@ -64,7 +64,6 @@ function init() {
         if(window.Notification && Notification.permission !== "denied") {
             //Notification.requestPermission这是一个静态方法，作用就是让浏览器出现是否允许通知的提示
             Notification.requestPermission(function(status) {
-                console.log('2: '+status);
                 //如果状态是同意
                 if (status === "granted") {
                     const m = new Notification('新消息', {
@@ -73,6 +72,7 @@ function init() {
                     });
                     m.onclick = function () {//点击当前消息提示框后，跳转到当前页面
                         window.focus();
+                        m.close();
                     }
                 } else if (window.notificationFlag === undefined || !window.notificationFlag){
                     alert('当前浏览器不支持弹出消息，为了更好的体验请更换为Chrome/Firefox浏览器');
@@ -88,6 +88,7 @@ function init() {
         }
 
         if(window.WebSocket){
+            // socket = new WebSocket("wss://www.qz-hotpot.xyz/cr/chat/" + window.userId);
             socket = new WebSocket("ws://localhost:8888/cr/chat/" + window.userId);
             socket.onmessage = function(event){
                 var json = JSON.parse(event.data);
@@ -120,7 +121,8 @@ function init() {
             };
 
             socket.onclose = function(event){
-                console.log("WebSocket已关闭...");
+                alert('由于长时间未发送消息，你已被下线');
+                console.log(event);
             };
         } else {
             alert("您的浏览器不支持WebSocket！");
