@@ -91,32 +91,34 @@ function init() {
             // socket = new WebSocket("wss://www.qz-hotpot.xyz/cr/chat/" + window.userId);
             socket = new WebSocket("ws://localhost:8888/cr/chat/" + window.userId);
             socket.onmessage = function(event){
-                var json = JSON.parse(event.data);
-                if (json !== null && json !== undefined) {
-                    var type = json.type;
-                    const data = JSON.parse(json.data);
+                var messageEntity = JSON.parse(event.data);
+                if (messageEntity !== null && messageEntity !== undefined) {
+                    var type = messageEntity.type;
                     if (type.endsWith('SENDING')) {
                         notification();
                     }
                     switch(type) {
                         case "SINGLE_SENDING":
-                            ws.singleReceive(data);
+                            ws.singleReceive(messageEntity);
                             break;
                         case "GROUP_SENDING":
-                            ws.groupReceive(data);
+                            ws.groupReceive(messageEntity);
                             break;
                         case "FILE_MSG_SINGLE_SENDING":
-                            ws.fileMsgSingleRecieve(data);
+                            ws.fileMsgSingleRecieve(messageEntity);
                             break;
                         case "FILE_MSG_GROUP_SENDING":
-                            ws.fileMsgGroupRecieve(data);
+                            ws.fileMsgGroupRecieve(messageEntity);
+                            break;
+                        case "ONLINE_NUMBER":
+                            showOnlineNumber(messageEntity);
                             break;
                         default:
                             console.log("不正确的类型！");
                     }
                 } else {
                     alert('error');
-                    console.log(json);
+                    console.log(messageEntity);
                 }
             };
 
@@ -129,6 +131,11 @@ function init() {
         }
     }
 
+    // 展示当前人数
+    function showOnlineNumber(messageEntity) {
+        var content = messageEntity.content;
+        $("#onlineNumber").html('在线人数：' + content);
+    }
     function setSentMessageMap() {
         sentMessageMap = new SentMessageMap();
         sentMessageMap.put("001", []);
