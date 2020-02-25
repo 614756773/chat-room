@@ -88,8 +88,8 @@ function init() {
         }
 
         if(window.WebSocket){
-            // socket = new WebSocket("wss://www.qz-hotpot.xyz/cr/chat/" + window.userId);
-            socket = new WebSocket("ws://localhost:8888/cr/chat/" + window.userId);
+            socket = new WebSocket("wss://www.qz-hotpot.xyz/cr/chat/" + window.userId);
+            // socket = new WebSocket("ws://localhost:8888/cr/chat/" + window.userId);
             socket.onmessage = function(event){
                 var messageEntity = JSON.parse(event.data);
                 if (messageEntity !== null && messageEntity !== undefined) {

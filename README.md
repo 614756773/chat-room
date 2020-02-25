@@ -10,4 +10,5 @@
     最好使用utf8mb4字符集，后期会考虑存储emoji
 - 运行
     - 运行Application的main方法
+        - 需要设置vm参数-Djasypt.encryptor.password=xxx `xxx是我的qq号`
     - 访问[localhost:8888/cr/chatroom.html](localhost:8888/cr/chatroom.html)
