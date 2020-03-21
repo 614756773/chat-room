@@ -3,12 +3,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>聊天室</title>
-    <link rel="icon" href="/cr/img/chat.ico" type="image/x-icon"/>
-    <link rel="stylesheet" type="text/css" href="/cr/css/canvas-nest.css">
-    <link rel="stylesheet" type="text/css" href="/cr/css/chatroom.css">
-    <link rel="stylesheet" type="text/css" href="/cr/css/common/layui.css">
-    <link rel="stylesheet" type="text/css" href="/cr/css/common/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/cr/css/common/fileinput.min.css">
+    <link rel="icon" href="./img/chat.ico" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" href="./css/canvas-nest.css">
+    <link rel="stylesheet" type="text/css" href="./css/chatroom.css">
+    <link rel="stylesheet" type="text/css" href="./css/common/layui.css">
+    <link rel="stylesheet" type="text/css" href="./css/common/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/common/fileinput.min.css">
 </head>
 <body>
 <!--原图-->
@@ -166,13 +166,13 @@
 </div>
 
 
-<script type="text/javascript" src="/cr/js/common/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="/cr/js/common/jquery.actual.min.js"></script>
-<script type="text/javascript" src="/cr/js/common/bootstrap.min.js"></script>
-<script type="text/javascript" src="/cr/js/common/fileinput.min.js"></script>
-<script type="text/javascript" src="/cr/js/common/zh.js"></script>
-<script type="text/javascript" src="/cr/js/chatroom.js"></script>
-<script type="text/javascript" src="/cr/js/canvas-nest.js"></script>
+<script type="text/javascript" src="./js/common/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="./js/common/jquery.actual.min.js"></script>
+<script type="text/javascript" src="./js/common/bootstrap.min.js"></script>
+<script type="text/javascript" src="./js/common/fileinput.min.js"></script>
+<script type="text/javascript" src="./js/common/zh.js"></script>
+<script type="text/javascript" src="./js/chatroom.js"></script>
+<script type="text/javascript" src="./js/canvas-nest.js"></script>
 <script type="text/javascript">
     setSentMessageMap();
     init();
@@ -203,7 +203,7 @@
             const result = JSON.parse(xhr.responseText);
             sendImg(result.id);
         };
-        xhr.open('POST', '/cr/file/upload', true);
+        xhr.open('POST', 'http://localhost:8888/cr/file/upload', true);
         xhr.send(formData);
     }
 

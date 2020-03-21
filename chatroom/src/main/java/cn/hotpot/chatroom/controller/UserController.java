@@ -47,7 +47,7 @@ public class UserController {
     @GetMapping("/getUserInfo")
     public UserVO getUserInfo() {
         UserVO.GroupVo groupVo = new UserVO.GroupVo()
-                .setGroupAvatarUrl("/cr/img/avatar/Group01.jpg")
+                .setGroupAvatarUrl("./img/avatar/Group01.jpg")
                 .setGroupId("01")
                 .setGroupName("Chat Room");
         return new UserVO()

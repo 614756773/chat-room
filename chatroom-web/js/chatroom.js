@@ -2,7 +2,7 @@ function init() {
 
         $.ajax({
             type : 'GET',
-            url : '/cr/user/getUserInfo',
+            url : 'http://localhost:8888/cr/user/getUserInfo',
             dataType: 'json',
             async : true,
                 success: function(data) {
@@ -37,7 +37,6 @@ function init() {
                 '</div>' +
                 '</li>';
         }
-        console.log(groupListHTML);
         $('.conLeft ul').append(groupListHTML);
 
         var friendListHTML = "";
@@ -68,7 +67,7 @@ function init() {
                 if (status === "granted") {
                     const m = new Notification('新消息', {
                         // body: '这里是通知内容！你想看什么客官？',　　//消息体内容
-                        icon:"/cr/img/chat.ico"　　//消息图片
+                        icon:"./img/chat.ico"　　//消息图片
                     });
                     m.onclick = function () {//点击当前消息提示框后，跳转到当前页面
                         window.focus();
@@ -88,8 +87,7 @@ function init() {
         }
 
         if(window.WebSocket){
-            socket = new WebSocket("wss://www.qz-hotpot.xyz/cr/chat/" + window.userId);
-            // socket = new WebSocket("ws://localhost:8888/cr/chat/" + window.userId);
+            socket = new WebSocket("ws://localhost:8888/cr/chat/" + window.userId);
             socket.onmessage = function(event){
                 var messageEntity = JSON.parse(event.data);
                 if (messageEntity !== null && messageEntity !== undefined) {
@@ -382,7 +380,7 @@ function init() {
     }
 
     $(".myfile").fileinput({
-        uploadUrl:"/cr/file/upload",
+        uploadUrl:"http://localhost:8888/cr/file/upload",
         uploadAsync : true, //默认异步上传
         showUpload : true, //是否显示上传按钮,跟随文本框的那个
         showRemove : false, //显示移除按钮,跟随文本框的那个
@@ -419,7 +417,7 @@ function init() {
         var originalFilename = result.name;
         var fileSize = (result.size / 1024);
         fileSize = fileSize.toFixed(2) + ' KB';
-        var fileUrl = '/cr/file/' + fileId;
+        var fileUrl = 'http://localhost:8888/cr/file/' + fileId;
         var content = "[文件]";
         var fromUserId = userId;
         var avatarUrl = $('#avatarUrl').attr("src");
@@ -534,7 +532,7 @@ function init() {
     function sendImg(obj) {
         let imgSrc;
         if (typeof (obj) === 'number') {
-            imgSrc = '/cr/file/' + obj  + '/preview';
+            imgSrc = 'http://localhost:8888/cr/file/' + obj  + '/preview';
         } else {
             imgSrc = $(obj).children('img').attr('src');
         }
