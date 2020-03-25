@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 public class GlobalExcetionHandler {
 
-    @ExceptionHandler(value =Exception.class)
-    public ResponseEntity<Object> exceptionHandler(Exception e){
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<Object> exceptionHandler(Exception e) {
         log.info(e.getMessage());
 
         if (e instanceof RuntimeException) {
