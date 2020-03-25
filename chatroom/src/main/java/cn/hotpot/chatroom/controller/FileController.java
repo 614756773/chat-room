@@ -1,7 +1,9 @@
 package cn.hotpot.chatroom.controller;
 
 import cn.hotpot.chatroom.dao.entity.ChatFile;
+import cn.hotpot.chatroom.dao.entity.ChatUser;
 import cn.hotpot.chatroom.dao.repository.ChatFileRepository;
+import cn.hotpot.chatroom.dao.repository.ChatUserRepository;
 import cn.hotpot.chatroom.model.vo.FileUploadResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +19,7 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * @author qinzhu
@@ -32,16 +35,13 @@ public class FileController {
     @Autowired
     private ChatFileRepository chatFileRepository;
 
+    @Autowired
+    private ChatUserRepository userRepository;
+
     @PostMapping("/upload")
     @ApiOperation("上传文件")
     public ResponseEntity<FileUploadResultVO> upload(MultipartFile file) throws IOException {
-        String suffix = checkSize(file);
-        ChatFile chatFile = new ChatFile()
-                .setName(file.getOriginalFilename())
-                .setType(suffix)
-                .setData(file.getBytes())
-                .setSize(file.getSize());
-        ChatFile entity = chatFileRepository.save(chatFile);
+        ChatFile entity = saveFile(file);
         return ResponseEntity.ok(new FileUploadResultVO(entity.getId(), entity.getName(), entity.getSize()));
     }
 
@@ -75,6 +75,35 @@ public class FileController {
             os.write(chatFile.getData());
             os.flush();
         }
+    }
+
+    @PutMapping("/avatar/{userId}")
+    @ApiOperation("修改头像")
+    public ResponseEntity<String> updatAvatar(@PathVariable String userId, MultipartFile file) throws IOException {
+        ChatUser user = userRepository.findByUserId(userId);
+        // 删除老头像文件
+        String avatarUrl = user.getAvatarUrl();
+        if (Pattern.matches("\\/file\\/[1-9]+\\/preview", avatarUrl)) {
+            String fileId = avatarUrl.split("/")[2];
+            chatFileRepository.deleteById(Integer.valueOf(fileId));
+        }
+
+        // 保存新头像
+        ChatFile chatFile = saveFile(file);
+        ChatUser chatUser = user
+                .setAvatarUrl(String.format("/file/%d/preview", chatFile.getId()));
+        userRepository.save(chatUser);
+        return ResponseEntity.ok(chatUser.getAvatarUrl());
+    }
+
+    private ChatFile saveFile(MultipartFile file) throws IOException {
+        String suffix = checkSize(file);
+        ChatFile chatFile = new ChatFile()
+                .setName(file.getOriginalFilename())
+                .setType(suffix)
+                .setData(file.getBytes())
+                .setSize(file.getSize());
+        return chatFileRepository.save(chatFile);
     }
 
     private String checkSize(MultipartFile file) {
