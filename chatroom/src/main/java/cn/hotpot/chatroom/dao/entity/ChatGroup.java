@@ -2,7 +2,6 @@ package cn.hotpot.chatroom.dao.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,50 +11,44 @@ import java.time.LocalDateTime;
 
 /**
  * @author qinzhu
- * @since 2019/12/20
+ * @since 2020/3/25
  */
 @Data
 @Entity
-@Table(indexes = {@Index(name = "userId", columnList = "userId", unique = true)})
+@Table(indexes = {@Index(name = "userId", columnList = "userId")})
 @Accessors(chain = true)
 @EntityListeners(AuditingEntityListener.class)
-public class ChatUser {
+public class ChatGroup {
+    /**
+     * id
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     /**
-     * id即账号，强制使用邮箱作为账号
-     */
-    @Column(length = 30)
-    private String userId;
-
-    /**
-     * 用户昵称
+     * 名称
      */
     @Column
-    private String username;
+    private String name;
 
     /**
-     * 头像
+     * 聊天组头像
      */
     @Column
     private String avatarUrl;
 
     /**
-     * 密码
+     * 聊天组是否为私有
      */
     @Column
-    private String pwd;
+    private Boolean isPrivate;
 
     /**
-     * 引荐人
+     * 聊天组的拥有人
      */
-    @Column
-    private String referrer;
-
-    @Column(columnDefinition = "json")
-    private String groupIds;
+    @Column(length = 30)
+    private String userId;
 
     @Column
     @CreatedDate
