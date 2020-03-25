@@ -3,6 +3,8 @@ package cn.hotpot.chatroom.controller;
 import cn.hotpot.chatroom.dao.entity.ChatFile;
 import cn.hotpot.chatroom.dao.repository.ChatFileRepository;
 import cn.hotpot.chatroom.model.vo.FileUploadResultVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,7 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/file")
+@Api(tags = "文件")
 public class FileController {
 
     private static Set<String> imgSuffix = new HashSet<>(Arrays.asList("png", "jpg", "jpge"));
@@ -30,6 +33,7 @@ public class FileController {
     private ChatFileRepository chatFileRepository;
 
     @PostMapping("/upload")
+    @ApiOperation("上传文件")
     public ResponseEntity<FileUploadResultVO> upload(MultipartFile file) throws IOException {
         String suffix = checkSize(file);
         ChatFile chatFile = new ChatFile()
@@ -45,6 +49,7 @@ public class FileController {
      * 下载文件
      */
     @GetMapping("/{id}")
+    @ApiOperation("下载文件")
     public void download(HttpServletResponse response, @PathVariable Integer id) throws IOException {
         try (ServletOutputStream os = response.getOutputStream()) {
             ChatFile chatFile = chatFileRepository.findById(id)
@@ -61,6 +66,7 @@ public class FileController {
      * 展示图片
      */
     @GetMapping("/{id}/preview")
+    @ApiOperation("展示图片")
     public void showImage(HttpServletResponse response, @PathVariable Integer id) throws IOException {
         try (ServletOutputStream os = response.getOutputStream()) {
             ChatFile chatFile = chatFileRepository.findById(id)

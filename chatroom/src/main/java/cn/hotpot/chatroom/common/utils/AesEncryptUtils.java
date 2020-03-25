@@ -1,87 +1,116 @@
 package cn.hotpot.chatroom.common.utils;
 
-import org.apache.tomcat.util.codec.binary.Base64;
+import org.bouncycastle.crypto.BufferedBlockCipher;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.engines.AESFastEngine;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.encoders.Hex;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 /**
  * @author qinzhu
  * @since 2019/12/19
  */
 public class AesEncryptUtils {
+    private final static String ENCODING = "UTF-8";
+    private final static byte[] IV = {0x38, 0x37, 0x36, 0x30, 0x34, 0x33,
+            0x32, 0x37, 0x38, 0x37, 0x36, 0x35, 0x31, 0x33, 0x32, 0x31};
+    private final static String DEFAULT_SALT = "12dc125f000db610cab6bfe4b0dae71c";
 
-    /**
-     * 必须是16个字符，即32位（4字节）
-     * java中一个char占两位，因为包含中文的编码
-     */
-    private static final String SALT = "0123456789123456";
-
-    /**
-     * 算法名称/加密模式/数据填充方式
-     */
-    private static final String CONFIG = "AES/ECB/PKCS5Padding";
-
-    /**
-     * 加密
-     *
-     * @param content    加密的字符串
-     * @param encryptKey key值
-     */
-    public static String encrypt(String content, String encryptKey) throws Exception {
-        KeyGenerator generator = KeyGenerator.getInstance("AES");
-        generator.init(128);
-        Cipher cipher = Cipher.getInstance(CONFIG);
-        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(encryptKey.getBytes(), "AES"));
-        byte[] b = cipher.doFinal(content.getBytes("utf-8"));
-        // 采用base64算法进行转码,避免出现中文乱码
-        return Base64.encodeBase64String(b);
-    }
-
-    /**
-     * 解密
-     *
-     * @param encryptStr 解密的字符串
-     * @param decryptKey 解密的key值
-     */
-    private static String decrypt(String encryptStr, String decryptKey) throws Exception {
-        KeyGenerator generator = KeyGenerator.getInstance("AES");
-        generator.init(128);
-        Cipher cipher = Cipher.getInstance(CONFIG);
-        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(decryptKey.getBytes(), "AES"));
-        // 采用base64算法进行转码,避免出现中文乱码
-        byte[] encryptBytes = Base64.decodeBase64(encryptStr);
-        byte[] decryptBytes = cipher.doFinal(encryptBytes);
-        return new String(decryptBytes);
-    }
-
-    public static String encrypt(String content){
+    public static synchronized String encrypt(String content) {
+        byte[] sendBytes = null;
         try {
-            return encrypt(content, SALT);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            sendBytes = DEFAULT_SALT.getBytes(ENCODING);
+            content = URLEncoder.encode(content, "utf-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        }
+        BufferedBlockCipher engine = new PaddedBufferedBlockCipher(
+                new CBCBlockCipher(new AESFastEngine()));
+        engine
+                .init(true, new ParametersWithIV(new KeyParameter(sendBytes),
+                        IV));
+        byte[] enc = new byte[engine.getOutputSize(content.getBytes().length)];
+        int size1 = engine.processBytes(content.getBytes(), 0, content
+                .getBytes().length, enc, 0);
+        try {
+            byte[] encryptedContent = new byte[size1 + engine.doFinal(enc, size1)];
+            System.arraycopy(enc, 0, encryptedContent, 0, encryptedContent.length);
+            return new String(Hex.encode(encryptedContent));
+        } catch (InvalidCipherTextException e) {
+            e.printStackTrace();
+            throw new IllegalStateException(e);
         }
     }
 
-    public static String decrypt(String encryptStr){
+    public static synchronized String decrypt(String cipherText) {
+        byte[] sendBytes;
         try {
-            return decrypt(encryptStr, SALT);
+            sendBytes = DEFAULT_SALT.getBytes(ENCODING);
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+            throw new RuntimeException(e1);
+        }
+
+        byte[] encryptedContent = hex2byte(cipherText);
+        BufferedBlockCipher engine = new PaddedBufferedBlockCipher(
+                new CBCBlockCipher(new AESFastEngine()));
+
+        engine.init(false,
+                new ParametersWithIV(new KeyParameter(sendBytes), IV));
+        byte[] dec = new byte[engine.getOutputSize(encryptedContent.length)];
+        int size1 = engine.processBytes(encryptedContent, 0,
+                encryptedContent.length, dec, 0);
+        try {
+            byte[] decryptedContent = new byte[size1 + engine.doFinal(dec, size1)];
+            System.arraycopy(dec, 0, decryptedContent, 0, decryptedContent.length);
+            String content = new String(decryptedContent);
+            return URLDecoder.decode(content, "utf-8");
+        } catch (InvalidCipherTextException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static byte[] hex2byte(String strhex) {
+        if (strhex == null) {
+            return null;
+        }
+        int l = strhex.length();
+        if (l % 2 == 1) {
+            return null;
+        }
+        byte[] b = new byte[l / 2];
+        for (int i = 0; i != l / 2; i++) {
+            b[i] = (byte) Integer.parseInt(strhex.substring(i * 2, i * 2 + 2),
+                    16);
+        }
+        return b;
+    }
+
+    public static void main(String[] args) {
+
+        String content = "测试内容";
+        String encryptStr = null;
+        try {
+            encryptStr = encrypt(content);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
         }
-    }
+        System.out.println("加密后=" + encryptStr);
 
-
-    public static void main(String[] args) throws Exception {
-        String content = "123456";
-        System.out.println("加密前：" + content);
-
-        String encrypt = encrypt(content, SALT);
-        System.out.println("加密后：" + encrypt);
-
-        String decrypt = decrypt(encrypt, SALT);
-        System.out.println("解密后：" + decrypt);
+        String decryptStr = null;
+        try {
+            decryptStr = decrypt(encryptStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("解密后=" + decryptStr);
     }
 }

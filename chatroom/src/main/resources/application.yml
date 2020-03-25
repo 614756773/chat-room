@@ -6,7 +6,7 @@ spring:
     name: chat-room
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://www.qz-hotpot.xyz:3306/chat_room?charset=utf8mb4&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://www.qz-hotpot.xyz:3306/chat_room?charset=utf8mb4&useSSL=false&serverTimezone=UTC&characterEncoding=utf-8
     username: ENC(MMw4b/ET5WkLGYLsQGZT3Q==)
     password: ENC(Ltec45nbu2K6OFmXEZY817uzdKs8XKOo)
   jpa:

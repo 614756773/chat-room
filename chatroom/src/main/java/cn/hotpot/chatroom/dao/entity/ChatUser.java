@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -25,7 +26,6 @@ public class ChatUser {
     /**
      * id即账号，强制使用邮箱作为账号
      */
-    @UniqueElements
     @Column(length = 30)
     private String userId;
     /**
@@ -48,13 +48,12 @@ public class ChatUser {
      */
     @Column
     private String referrer;
-    /**
-     * 邀请码，每个用户天只能生产3个
-     */
-    @Column
-    private Integer invitationId;
 
     @Column
     @CreatedDate
     private LocalDateTime createTime;
+
+    @Column
+    @LastModifiedDate
+    private LocalDateTime modifyTime;
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * @since 2019/12/20
  */
 @Entity
-@Table(indexes = {@Index(name = "userId", columnList = "userId", unique = true)})
+@Table(indexes = {@Index(name = "userId", columnList = "userId")})
 @Data
 @Accessors(chain = true)
 @EntityListeners(AuditingEntityListener.class)
@@ -51,5 +51,9 @@ public class ChatInvitationCode {
 
     public ChatInvitationCode(int mockInvitationCode) {
         this.id = mockInvitationCode;
+    }
+
+    public ChatInvitationCode(String userId) {
+        this.userId = userId;
     }
 }
